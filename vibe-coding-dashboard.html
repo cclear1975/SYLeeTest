@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>바이브코딩 활용 대시보드</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tequila, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .card-title {
+            font-size: 1.4em;
+            color: #667eea;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .feature-list li:hover {
+            background: #e9ecef;
+        }
+
+        .feature-icon {
+            color: #667eea;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .wide-card {
+            grid-column: 1 / -1;
+        }
+
+        .benefit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .benefit-item {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .benefit-item:hover {
+            transform: scale(1.05);
+        }
+
+        .benefit-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .process-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            padding: 20px;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎵 바이브코딩 활용 대시보드</h1>
+            <p class="subtitle">AI와 개발자의 협업으로 코딩 생산성을 극대화하세요</p>
+        </header>
+
+        <div class="dashboard">
+            <!-- 핵심 통계 -->
+            <div class="card">
+                <div class="card-title">📊 생산성 지표</div>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">3배</div>
+                        <div class="stat-label">개발 속도 향상</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">70%</div>
+                        <div class="stat-label">코드 작성 시간 단축</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">50%</div>
+                        <div class="stat-label">버그 감소</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">90%</div>
+                        <div class="stat-label">개발자 만족도</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 주요 기능 -->
+            <div class="card">
+                <div class="card-title">⚡ 주요 기능</div>
+                <ul class="feature-list">
+                    <li><span class="feature-icon">✓</span>자동 코드 생성 및 완성</li>
+                    <li><span class="feature-icon">✓</span>실시간 코드 리뷰</li>
+                    <li><span class="feature-icon">✓</span>버그 자동 탐지 및 수정</li>
+                    <li><span class="feature-icon">✓</span>리팩토링 제안</li>
+                    <li><span class="feature-icon">✓</span>문서 자동 생성</li>
+                    <li><span class="feature-icon">✓</span>테스트 코드 작성 지원</li>
+                </ul>
+            </div>
+
+            <!-- 개발 프로세스 -->
+            <div class="card wide-card">
+                <div class="card-title">🔄 바이브코딩 개발 프로세스</div>
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <div class="step-title">요구사항 입력</div>
+                        <div>자연어로 구현하고 싶은 기능을 설명합니다</div>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <div class="step-title">AI 코드 생성</div>
+                        <div>AI가 최적의 코드 솔루션을 자동으로 생성합니다</div>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <div class="step-title">검토 및 수정</div>
+                        <div>개발자가 생성된 코드를 검토하고 필요시 수정합니다</div>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <div class="step-title">테스트 및 배포</div>
+                        <div>AI가 테스트 코드를 생성하고 품질을 검증합니다</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 시간 절약 차트 -->
+            <div class="card">
+                <div class="card-title">⏱️ 작업별 시간 절약</div>
+                <div class="chart-container">
+                    <canvas id="timeSavingsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 코드 품질 차트 -->
+            <div class="card">
+                <div class="card-title">📈 코드 품질 향상</div>
+                <div class="chart-container">
+                    <canvas id="qualityChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 활용 분야 -->
+            <div class="card wide-card">
+                <div class="card-title">🎯 주요 활용 분야</div>
+                <div class="benefit-grid">
+                    <div class="benefit-item">
+                        <div class="benefit-icon">🌐</div>
+                        <div><strong>웹 개발</strong></div>
+                        <div style="font-size: 0.9em; margin-top: 5px;">프론트엔드 & 백엔드</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">📱</div>
+                        <div><strong>앱 개발</strong></div>
+                        <div style="font-size: 0.9em; margin-top: 5px;">모바일 애플리케이션</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">🤖</div>
+                        <div><strong>AI/ML</strong></div>
+                        <div style="font-size: 0.9em; margin-top: 5px;">머신러닝 모델 구현</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">🔧</div>
+                        <div><strong>자동화</strong></div>
+                        <div style="font-size: 0.9em; margin-top: 5px;">스크립트 & 툴</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">💾</div>
+                        <div><strong>데이터 처리</strong></div>
+                        <div style="font-size: 0.9em; margin-top: 5px;">ETL & 분석</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">🔐</div>
+                        <div><strong>보안</strong></div>
+                        <div style="font-size: 0.9em; margin-top: 5px;">취약점 분석</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 언어별 지원 -->
+            <div class="card">
+                <div class="card-title">💻 지원 프로그래밍 언어</div>
+                <div class="chart-container">
+                    <canvas id="languageChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 사용자 피드백 -->
+            <div class="card">
+                <div class="card-title">⭐ 개발자 만족도</div>
+                <div class="chart-container">
+                    <canvas id="satisfactionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>🚀 바이브코딩으로 더 빠르고 효율적인 개발을 경험하세요!</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">© 2025 Vibe Coding Dashboard</p>
+        </footer>
+    </div>
+
+    <script>
+        // 시간 절약 차트
+        const timeSavingsCtx = document.getElementById('timeSavingsChart').getContext('2d');
+        new Chart(timeSavingsCtx, {
+            type: 'bar',
+            data: {
+                labels: ['코드 작성', '디버깅', '리팩토링', '문서화', '테스트'],
+                datasets: [{
+                    label: '기존 방식 (시간)',
+                    data: [8, 4, 3, 2, 3],
+                    backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                }, {
+                    label: '바이브코딩 (시간)',
+                    data: [2, 1, 1, 0.5, 1],
+                    backgroundColor: 'rgba(102, 126, 234, 0.7)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '시간 (시간)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 코드 품질 차트
+        const qualityCtx = document.getElementById('qualityChart').getContext('2d');
+        new Chart(qualityCtx, {
+            type: 'line',
+            data: {
+                labels: ['1주차', '2주차', '3주차', '4주차', '5주차', '6주차'],
+                datasets: [{
+                    label: '코드 품질 점수',
+                    data: [65, 72, 78, 85, 90, 95],
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: '품질 점수'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 언어별 지원 차트
+        const languageCtx = document.getElementById('languageChart').getContext('2d');
+        new Chart(languageCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Python', 'JavaScript', 'Java', 'C++', 'Go', 'TypeScript', '기타'],
+                datasets: [{
+                    data: [25, 20, 15, 12, 10, 10, 8],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 159, 64, 0.7)',
+                        'rgba(199, 199, 199, 0.7)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+
+        // 만족도 차트
+        const satisfactionCtx = document.getElementById('satisfactionChart').getContext('2d');
+        new Chart(satisfactionCtx, {
+            type: 'radar',
+            data: {
+                labels: ['사용 편의성', '코드 품질', '속도', '학습 곡선', '지원 언어', '문서화'],
+                datasets: [{
+                    label: '바이브코딩',
+                    data: [95, 90, 93, 85, 88, 92],
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    backgroundColor: 'rgba(102, 126, 234, 0.2)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
